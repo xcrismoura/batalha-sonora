@@ -7,6 +7,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <meta name="theme-color" content="#1F4A75">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>Batalha Sonora</title>
@@ -55,7 +57,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 #tbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:6px}#tbtns .big{font-size:clamp(18px,4vmin,26px);padding:14px 40px;min-width:170px}
 #tbtns .alt{background:#fff;color:#1F4A75;border:3px solid #1F4A75}
 @media (orientation:portrait){#titulo{gap:14px}#titulo .art{display:none}#titulo .artv{display:block;width:min(92vw,420px);height:auto}#tbtns{flex-direction:column;width:min(80vw,320px);margin-top:14px}}
-#roll{position:absolute;left:0;top:34px;width:700px;height:156px;display:none}#ttl{display:none}.tocar #roll,.tocar #ttl,.treino #ttl,.treino #qq{display:block}#qq{display:none}#brp{left:358px;top:266px;width:124px;height:38px;border-radius:10px;font-size:14px;display:none}.treino #brp{display:block}.treino #bto{left:228px;width:124px}.treino #hp,.treino #cmb,.treino #tb,.treino .orb,.treino #fx,.treino #pts{display:none!important}.tocar #hp,.tocar #cmb,.tocar #sc,.tocar #tb,.tocar #bto,.tocar .orb,.tocar #fx,.tocar #pts{display:none!important}
+#roll{position:absolute;left:0;top:34px;width:700px;height:156px;display:none}#ttl{display:none}.tocar #roll,.tocar #ttl,.treino #ttl,.treino #qq{display:block}#qq{display:none}#brp{left:358px;top:266px;width:124px;height:38px;border-radius:10px;font-size:14px;display:none}.treino #brp{display:block}.treino #sc{right:auto;left:0;width:700px;text-align:center;pointer-events:none}.treino #bto{left:228px;width:124px}.treino #hp,.treino #cmb,.treino #tb,.treino .orb,.treino #fx,.treino #pts{display:none!important}.tocar #hp,.tocar #cmb,.tocar #sc,.tocar #tb,.tocar #bto,.tocar .orb,.tocar #fx,.tocar #pts{display:none!important}
 #giro{display:none;position:fixed;inset:0;background:#B8D4E3;color:#12324f;z-index:9;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:600;padding:24px}
 </style>
 </head>
@@ -174,7 +176,7 @@ if(hearts<=0){phase="over";later(over,1200);}else{phase="between";later(fire,180
 function over(){if(score>best){best=score;try{localStorage.setItem("defesa_best",String(best));}catch(e){}}
 $("res").textContent="Pontos: "+score+" \u00b7 Recorde: "+best;$("fim").style.display="flex";}
 function begin(){tocar=false;treino=false;stage.classList.remove("tocar","treino");releaseAll();tok++;hearts=3;score=0;combo=0;last=-1;hud();bar(DUR);$("eo").style.display="none";$("co").style.display="none";
-$("inicio").style.display="none";$("fim").style.display="none";phase="between";tone(tm(),1.1);later(fire,1700);}
+$("inicio").style.display="none";$("fim").style.display="none";phase="between";tone(tm(),1,true);later(fire,1700);}
 
 function tick(ts){var dt=Math.min(.05,(ts-prev)/1000);prev=ts;if(port)dt=0;if(tocar)draw(performance.now());
 if(phase==="flying"){elapsed+=dt;ex=START-SPEED*elapsed;rem=Math.max(0,DUR-elapsed);bar(rem);place($("eo"),ex);
@@ -186,10 +188,10 @@ requestAnimationFrame(function(t){prev=t;tick(t);});
 
 var bs=document.querySelectorAll(".n");
 for(var k=0;k<bs.length;k++){(function(el){el.addEventListener("pointerdown",function(e){e.preventDefault();var i=parseInt(el.getAttribute("data-i"),10);if(tocar)startNote(i,el,e.pointerId);else if(treino)answerT(i);else answer(i);});})(bs[k]);}
-$("bto").addEventListener("click",function(){tone(tm(),1.1);});
+$("bto").addEventListener("click",function(){tone(tm(),1,true);});
 var keys=$("keys");
 function mk(){keys.innerHTML="";NOM.forEach(function(n,i){var b=document.createElement("button");b.textContent=n;if(i===tom){b.style.background="#1F4A75";b.style.color="#fff";}
-b.addEventListener("click",function(){tom=i;$("tt").textContent=n;$("painel").style.display="none";tok++;$("eo").style.display="none";$("co").style.display="none";phase="between";tone(tm(),1.1);if(treino)later(novaT,1700);else if(!tocar&&hearts>0)later(fire,1700);});keys.appendChild(b);});}
+b.addEventListener("click",function(){tom=i;$("tt").textContent=n;$("painel").style.display="none";tok++;$("eo").style.display="none";$("co").style.display="none";phase="between";tone(tm(),1,true);if(treino)later(novaT,1700);else if(!tocar&&hearts>0)later(fire,1700);});keys.appendChild(b);});}
 $("tom").addEventListener("click",function(){mk();$("painel").style.display="flex";});
 $("fechar").addEventListener("click",function(){$("painel").style.display="none";});
 $("go").addEventListener("click",function(){var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();begin();});
@@ -216,19 +218,19 @@ for(var k=0;k<8;k++){var y=6+(12-SEMI[k])*11;c.fillStyle="rgba(255,255,255,.08)"
 for(var q=rolls.length-1;q>=0;q--){var r=rolls[q],xr=Math.min(700,52+(now-r.ts)*V/1000),xl=r.te===null?52:52+(now-r.te)*V/1000;if(xl>=700){rolls.splice(q,1);continue;}c.fillStyle=COL[r.i];c.fillRect(xl,6+(12-SEMI[r.i])*11+1,xr-xl,9);}}
 addEventListener("pointerup",function(e){endNote(e.pointerId);});addEventListener("pointercancel",function(e){endNote(e.pointerId);});
 document.addEventListener("contextmenu",function(e){e.preventDefault();});
-function hudT(){$("sc").textContent="Acertos "+aT+" de "+tT;}
+function hudT(){$("sc").textContent="Acertos: "+aT+"\u00a0\u00a0\u00a0\u00a0Erros: "+(tT-aT);}
 function novaT(){var i;do{i=Math.floor(Math.random()*8);}while(i===last);last=target=i;answered=false;phase="treino";playT();}
 function answerT(i){if(phase!=="treino"||answered)return;answered=true;tT++;var b=btn(i);
 if(i===target){aT++;sfxOk();anim(b,"ring",600);hudT();later(novaT,1000);}
 else{sfxErr();anim(b,"shake",400);hint(target);hudT();later(function(){playT();},700);later(novaT,2800);}}
 function startTreino(){releaseAll();tocar=false;treino=true;stage.classList.remove("tocar");stage.classList.add("treino");$("ttl").textContent="Treinar";aT=0;tT=0;hudT();tok++;last=-1;phase="between";
-$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";tone(tm(),1.1);later(novaT,1500);}
+$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";tone(tm(),1,true);later(novaT,1500);}
 var KM={KeyA:0,KeyS:1,KeyD:2,KeyF:3,KeyJ:4,KeyK:5,KeyL:6,Semicolon:7};
 function kidx(e){var i=KM[e.code];if(i===undefined&&(e.key==="ç"||e.key==="Ç"))i=7;return i;}
 function livre(){return $("titulo").style.display==="none"&&$("painel").style.display!=="flex"&&$("pnom").style.display!=="flex"&&$("fim").style.display!=="flex"&&!port;}
 addEventListener("keydown",function(e){if(e.repeat||e.ctrlKey||e.metaKey||e.altKey||!ctx||!livre())return;var i=kidx(e);
 if(i!==undefined){e.preventDefault();if(tocar)startNote(i,btn(i),"k"+i);else if(treino)answerT(i);else answer(i);}
-else if(e.code==="KeyG"){e.preventDefault();tone(tm(),1.1);}
+else if(e.code==="KeyG"){e.preventDefault();tone(tm(),1,true);}
 else if(e.code==="KeyH"){if(treino&&target!=null)playT();}});
 addEventListener("keyup",function(e){if(!tocar)return;var i=kidx(e);if(i!==undefined)endNote("k"+i);});
 function lock(){try{var o=screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape");if(o&&o.catch)o.catch(function(){});}catch(e){}}
