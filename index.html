@@ -52,10 +52,10 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 #titulo .art{width:min(94vw,760px);max-height:44vh;height:auto}#titulo .artv{display:none}
 #titulo h1{margin:0;font-size:clamp(34px,9vmin,72px);color:#fff;text-shadow:3px 3px 0 #1F4A75;line-height:1}
 #titulo p{margin:0;color:#12324f;font-size:clamp(13px,2.6vmin,18px)}
-#tbtns{display:flex;gap:16px;margin-top:6px}#tbtns .big{font-size:clamp(18px,4vmin,26px);padding:14px 40px;min-width:170px}
+#tbtns{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:6px}#tbtns .big{font-size:clamp(18px,4vmin,26px);padding:14px 40px;min-width:170px}
 #tbtns .alt{background:#fff;color:#1F4A75;border:3px solid #1F4A75}
 @media (orientation:portrait){#titulo{gap:14px}#titulo .art{display:none}#titulo .artv{display:block;width:min(92vw,420px);height:auto}#tbtns{flex-direction:column;width:min(80vw,320px);margin-top:14px}}
-#roll{position:absolute;left:0;top:34px;width:700px;height:156px;display:none}#ttl{display:none}.tocar #roll,.tocar #ttl{display:block}.tocar #hp,.tocar #cmb,.tocar #sc,.tocar #tb,.tocar #bto,.tocar .orb,.tocar #fx,.tocar #pts{display:none!important}
+#roll{position:absolute;left:0;top:34px;width:700px;height:156px;display:none}#ttl{display:none}.tocar #roll,.tocar #ttl,.treino #ttl,.treino #qq{display:block}#qq{display:none}#brp{left:358px;top:266px;width:124px;height:38px;border-radius:10px;font-size:14px;display:none}.treino #brp{display:block}.treino #bto{left:228px;width:124px}.treino #hp,.treino #cmb,.treino #tb,.treino .orb,.treino #fx,.treino #pts{display:none!important}.tocar #hp,.tocar #cmb,.tocar #sc,.tocar #tb,.tocar #bto,.tocar .orb,.tocar #fx,.tocar #pts{display:none!important}
 #giro{display:none;position:fixed;inset:0;background:#B8D4E3;color:#12324f;z-index:9;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:600;padding:24px}
 </style>
 </head>
@@ -79,7 +79,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 <g id="plg"><use href="#robo" transform="translate(66,86)" style="color:#2FA7E0"/></g>
 <use href="#robo" transform="translate(634,86) scale(-1,1)" style="color:#8E5BD9"/>
 </svg>
-<div class="t" id="hp"></div><div class="t" id="ttl" style="left:18px;top:7px;font-size:16px">Tocar</div><div class="t" id="cmb"></div><div class="t" id="sc"></div><div id="tb"></div>
+<div class="t" id="hp"></div><div class="t" id="qq" style="left:250px;top:92px;width:200px;text-align:center;font-size:24px;color:#12324f">Qual é a nota?</div><div class="t" id="ttl" style="left:18px;top:7px;font-size:16px">Tocar</div><div class="t" id="cmb"></div><div class="t" id="sc"></div><div id="tb"></div>
 <div class="orb" id="eo">&#9834;</div><div class="orb" id="co"></div><div id="fx"></div><div id="pts"></div>
 
 <canvas id="roll" width="1400" height="312"></canvas>
@@ -94,6 +94,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 <button class="g" id="tom">&#9834; <span id="tt">C</span></button>
 <button class="g" id="mod">Nomes: <span id="mn">Tafejo</span></button>
 <button class="g" id="bto">Ouvir tônica</button>
+<button class="g" id="brp">Repetir som</button>
 <button class="g" id="mnu" style="left:540px;top:5px;width:56px;height:24px;border-radius:12px;font-size:12px">Menu</button>
 
 <div class="ov" id="painel" style="display:none"><p><b>Tonalidade</b> (dó fixo)</p><div id="keys"></div><button class="big" id="fechar" style="font-size:16px;padding:8px 26px">Fechar</button></div>
@@ -120,7 +121,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 <g font-size="24"><text x="30" y="70" fill="#E8000B">&#9834;</text><text x="78" y="90" fill="#F57C00">&#9834;</text><text x="126" y="70" fill="#FFF200">&#9834;</text><text x="174" y="90" fill="#12C800">&#9834;</text><text x="222" y="70" fill="#25C5E8">&#9834;</text><text x="270" y="90" fill="#2A14E0">&#9834;</text><text x="318" y="70" fill="#D800D8">&#9834;</text></g>
 </svg>
 <h1>Batalha Sonora</h1><p>Treine o ouvido pelos graus da escala</p>
-<div id="tbtns"><button class="big" id="bb">Batalhar</button><button class="big alt" id="bt">Tocar</button></div>
+<div id="tbtns"><button class="big" id="bb">Batalhar</button><button class="big alt" id="btr">Treinar</button><button class="big alt" id="bt">Tocar</button></div>
 <div id="aviso" style="display:none;position:fixed;left:50%;bottom:8%;transform:translateX(-50%);background:#1F4A75;color:#fff;padding:12px 22px;border-radius:12px;z-index:30;font-weight:600">Modo Tocar: em breve</div>
 </div>
 <div id="giro">Gire o celular para a horizontal para jogar.</div>
@@ -132,7 +133,7 @@ var NOM=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 var $=function(i){return document.getElementById(i);};
 var stage=$("stage"),ctx=null,tom=0,tok=0,phase="menu",target=0,last=-1,chosen=0,answered=false;
 var ex=566,cx=134,elapsed=0,nextRep=3.5,rem=10,hearts=3,score=0,combo=0,best=0,prev=0;
-var tocar=false,voices={},rolls=[],port=false,START=566,HITX=124,DUR=10,SPEED=(START-HITX)/DUR;
+var treino=false,aT=0,tT=0,tocar=false,voices={},rolls=[],port=false,START=566,HITX=124,DUR=10,SPEED=(START-HITX)/DUR;
 try{best=parseInt(localStorage.getItem("defesa_best")||"0",10)||0;}catch(e){}
 
 function fit(){var vv=window.visualViewport,w=vv?vv.width:innerWidth,h=vv?vv.height:innerHeight,s=Math.min(w/700,h/340);stage.style.transform="scale("+s+")";stage.style.left=((w-700*s)/2)+"px";stage.style.top=((h-340*s)/2)+"px";port=h>w*1.1;$("giro").style.display=port?"flex":"none";}
@@ -172,7 +173,7 @@ hearts--;combo=0;hud();anim($("plg"),"shake",400);anim($("hp"),"pl",400);bar(0);
 if(hearts<=0){phase="over";later(over,1200);}else{phase="between";later(fire,1800);}}
 function over(){if(score>best){best=score;try{localStorage.setItem("defesa_best",String(best));}catch(e){}}
 $("res").textContent="Pontos: "+score+" \u00b7 Recorde: "+best;$("fim").style.display="flex";}
-function begin(){tocar=false;stage.classList.remove("tocar");releaseAll();tok++;hearts=3;score=0;combo=0;last=-1;hud();bar(DUR);$("eo").style.display="none";$("co").style.display="none";
+function begin(){tocar=false;treino=false;stage.classList.remove("tocar","treino");releaseAll();tok++;hearts=3;score=0;combo=0;last=-1;hud();bar(DUR);$("eo").style.display="none";$("co").style.display="none";
 $("inicio").style.display="none";$("fim").style.display="none";phase="between";tone(tm(),1.1);later(fire,1700);}
 
 function tick(ts){var dt=Math.min(.05,(ts-prev)/1000);prev=ts;if(port)dt=0;if(tocar)draw(performance.now());
@@ -184,11 +185,11 @@ requestAnimationFrame(tick);}
 requestAnimationFrame(function(t){prev=t;tick(t);});
 
 var bs=document.querySelectorAll(".n");
-for(var k=0;k<bs.length;k++){(function(el){el.addEventListener("pointerdown",function(e){e.preventDefault();var i=parseInt(el.getAttribute("data-i"),10);if(tocar)startNote(i,el,e.pointerId);else answer(i);});})(bs[k]);}
+for(var k=0;k<bs.length;k++){(function(el){el.addEventListener("pointerdown",function(e){e.preventDefault();var i=parseInt(el.getAttribute("data-i"),10);if(tocar)startNote(i,el,e.pointerId);else if(treino)answerT(i);else answer(i);});})(bs[k]);}
 $("bto").addEventListener("click",function(){tone(tm(),1.1);});
 var keys=$("keys");
 function mk(){keys.innerHTML="";NOM.forEach(function(n,i){var b=document.createElement("button");b.textContent=n;if(i===tom){b.style.background="#1F4A75";b.style.color="#fff";}
-b.addEventListener("click",function(){tom=i;$("tt").textContent=n;$("painel").style.display="none";tok++;$("eo").style.display="none";$("co").style.display="none";phase="between";tone(tm(),1.1);if(!tocar&&hearts>0)later(fire,1700);});keys.appendChild(b);});}
+b.addEventListener("click",function(){tom=i;$("tt").textContent=n;$("painel").style.display="none";tok++;$("eo").style.display="none";$("co").style.display="none";phase="between";tone(tm(),1.1);if(treino)later(novaT,1700);else if(!tocar&&hearts>0)later(fire,1700);});keys.appendChild(b);});}
 $("tom").addEventListener("click",function(){mk();$("painel").style.display="flex";});
 $("fechar").addEventListener("click",function(){$("painel").style.display="none";});
 $("go").addEventListener("click",function(){var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();begin();});
@@ -215,13 +216,30 @@ for(var k=0;k<8;k++){var y=6+(12-SEMI[k])*11;c.fillStyle="rgba(255,255,255,.08)"
 for(var q=rolls.length-1;q>=0;q--){var r=rolls[q],xr=Math.min(700,52+(now-r.ts)*V/1000),xl=r.te===null?52:52+(now-r.te)*V/1000;if(xl>=700){rolls.splice(q,1);continue;}c.fillStyle=COL[r.i];c.fillRect(xl,6+(12-SEMI[r.i])*11+1,xr-xl,9);}}
 addEventListener("pointerup",function(e){endNote(e.pointerId);});addEventListener("pointercancel",function(e){endNote(e.pointerId);});
 document.addEventListener("contextmenu",function(e){e.preventDefault();});
+function hudT(){$("sc").textContent="Acertos "+aT+" de "+tT;}
+function novaT(){var i;do{i=Math.floor(Math.random()*8);}while(i===last);last=target=i;answered=false;phase="treino";playT();}
+function answerT(i){if(phase!=="treino"||answered)return;answered=true;tT++;var b=btn(i);
+if(i===target){aT++;sfxOk();anim(b,"ring",600);hudT();later(novaT,1000);}
+else{sfxErr();anim(b,"shake",400);hint(target);hudT();later(function(){playT();},700);later(novaT,2800);}}
+function startTreino(){releaseAll();tocar=false;treino=true;stage.classList.remove("tocar");stage.classList.add("treino");$("ttl").textContent="Treinar";aT=0;tT=0;hudT();tok++;last=-1;phase="between";
+$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";tone(tm(),1.1);later(novaT,1500);}
+var KM={KeyA:0,KeyS:1,KeyD:2,KeyF:3,KeyJ:4,KeyK:5,KeyL:6,Semicolon:7};
+function kidx(e){var i=KM[e.code];if(i===undefined&&(e.key==="ç"||e.key==="Ç"))i=7;return i;}
+function livre(){return $("titulo").style.display==="none"&&$("painel").style.display!=="flex"&&$("pnom").style.display!=="flex"&&$("fim").style.display!=="flex"&&!port;}
+addEventListener("keydown",function(e){if(e.repeat||e.ctrlKey||e.metaKey||e.altKey||!ctx||!livre())return;var i=kidx(e);
+if(i!==undefined){e.preventDefault();if(tocar)startNote(i,btn(i),"k"+i);else if(treino)answerT(i);else answer(i);}
+else if(e.code==="KeyG"){e.preventDefault();tone(tm(),1.1);}
+else if(e.code==="KeyH"){if(treino&&target!=null)playT();}});
+addEventListener("keyup",function(e){if(!tocar)return;var i=kidx(e);if(i!==undefined)endNote("k"+i);});
 function lock(){try{var o=screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape");if(o&&o.catch)o.catch(function(){});}catch(e){}}
 $("bb").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}
 if(r&&r.then)r.then(lock,lock);else lock();
 var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();
 $("titulo").style.display="none";begin();});
-$("bt").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();tok++;phase="menu";tocar=true;stage.classList.add("tocar");$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";$("titulo").style.display="none";});
-$("mnu").addEventListener("click",function(){releaseAll();tocar=false;stage.classList.remove("tocar");tok++;phase="menu";$("eo").style.display="none";$("co").style.display="none";$("painel").style.display="none";$("pnom").style.display="none";$("fim").style.display="none";
+$("brp").addEventListener("click",function(){if(treino&&target!=null)playT();});
+$("btr").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();$("titulo").style.display="none";startTreino();});
+$("bt").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();tok++;phase="menu";tocar=true;treino=false;stage.classList.remove("treino");stage.classList.add("tocar");$("ttl").textContent="Tocar";$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";$("titulo").style.display="none";});
+$("mnu").addEventListener("click",function(){releaseAll();tocar=false;treino=false;stage.classList.remove("tocar","treino");tok++;phase="menu";$("eo").style.display="none";$("co").style.display="none";$("painel").style.display="none";$("pnom").style.display="none";$("fim").style.display="none";
 try{if(document.fullscreenElement)document.exitFullscreen();else if(document.webkitFullscreenElement)document.webkitExitFullscreen();}catch(e){}
 try{screen.orientation.unlock();}catch(e){}
 $("titulo").style.display="flex";});
