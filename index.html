@@ -67,6 +67,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 #stage.desk .n[data-i="6"]{left:554px!important;top:196px!important}#stage.desk .n[data-i="7"]{left:620px!important;top:196px!important}
 #stage.desk #tom,#stage.desk #mod,#stage.desk #bto,#stage.desk #brp{left:285px;width:130px}
 #stage.desk #tom{top:198px;height:30px}#stage.desk #mod{top:232px;height:28px}#stage.desk #bto{top:266px;height:32px}#stage.desk #brp{top:302px;height:30px}
+#keys2{display:grid;grid-template-columns:repeat(4,86px);gap:10px;margin-bottom:14px}#keys2 button{height:48px;border-radius:10px;font-size:18px;font-weight:600;background:#fff;border:2px solid #9A9A9A;color:#12324f}#msg{position:absolute;left:230px;top:62px;width:240px;text-align:center;background:#7EC8F2;border-radius:14px;padding:8px 0;font-size:15px;color:#12324f;display:none;z-index:3}#msg b{font-size:34px}
 #giro{display:none;position:fixed;inset:0;background:#B8D4E3;color:#12324f;z-index:9;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:600;padding:24px}
 </style>
 </head>
@@ -91,7 +92,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 <use href="#robo" transform="translate(634,86) scale(-1,1)" style="color:#8E5BD9"/>
 </svg>
 <div class="t" id="hp"></div><div class="t" id="qq" style="left:250px;top:92px;width:200px;text-align:center;font-size:24px;color:#12324f">Qual é a nota?</div><div class="t" id="ttl" style="left:18px;top:7px;font-size:16px">Tocar</div><div class="t" id="cmb"></div><div class="t" id="sc"></div><div id="tb"></div>
-<div class="orb" id="eo">&#9834;</div><div class="orb" id="co"></div><div id="fx"></div><div id="pts"></div>
+<div class="orb" id="eo">&#9834;</div><div class="orb" id="co"></div><div id="fx"></div><div id="pts"></div><div id="msg"></div>
 
 <canvas id="roll" width="1400" height="312"></canvas>
 <button class="n" data-i="1" style="left:84px;top:190px;background:#F57C00;color:#2b1500">PA</button>
@@ -108,6 +109,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 <button class="g" id="brp">Repetir som</button>
 <button class="g" id="mnu" style="left:540px;top:5px;width:56px;height:24px;border-radius:12px;font-size:12px">Menu</button>
 
+<div class="ov" id="escolha" style="display:none"><p style="font-size:22px"><b>Escolha a sua tonalidade</b></p><div id="keys2"></div><button class="big" id="voltar" style="font-size:16px;padding:8px 26px">Voltar</button></div>
 <div class="ov" id="painel" style="display:none"><p><b>Tonalidade</b> (dó fixo)</p><div id="keys"></div><button class="big" id="fechar" style="font-size:16px;padding:8px 26px">Fechar</button></div>
 <div class="ov" id="pnom" style="display:none"><p><b>Nomes das notas</b></p><div id="nk"></div><button class="big" id="fn" style="font-size:16px;padding:8px 26px">Fechar</button></div>
 <div class="ov" id="inicio" style="display:none"><h1>Defesa das notas</h1><p>O computador atira um som, que toca por 1 segundo. Você tem 10 segundos para contra-atacar com o grau certo, e só pode escolher uma nota. A tônica é a nota vermelha.</p><button class="big" id="go">Começar</button></div>
@@ -185,7 +187,7 @@ if(hearts<=0){phase="over";later(over,1200);}else{phase="between";later(fire,180
 function over(){if(score>best){best=score;try{localStorage.setItem("defesa_best",String(best));}catch(e){}}
 $("res").textContent="Pontos: "+score+" \u00b7 Recorde: "+best;$("fim").style.display="flex";}
 function begin(){tocar=false;treino=false;stage.classList.remove("tocar","treino");releaseAll();tok++;hearts=3;score=0;combo=0;last=-1;hud();bar(DUR);$("eo").style.display="none";$("co").style.display="none";
-$("inicio").style.display="none";$("fim").style.display="none";phase="between";tone(tm(),1,true);later(fire,1700);}
+$("inicio").style.display="none";$("fim").style.display="none";escala(fire);}
 
 function tick(ts){var dt=Math.min(.05,(ts-prev)/1000);prev=ts;if(port)dt=0;if(tocar)draw(performance.now());
 if(phase==="flying"){elapsed+=dt;ex=START-SPEED*elapsed;rem=Math.max(0,DUR-elapsed);bar(rem);place($("eo"),ex);
@@ -204,7 +206,7 @@ for(var k=0;k<bs.length;k++){(function(el){el.addEventListener("pointerdown",fun
 $("bto").addEventListener("click",function(){tone(tm(),1,true);});
 var keys=$("keys");
 function mk(){keys.innerHTML="";NOM.forEach(function(n,i){var b=document.createElement("button");b.textContent=n;if(i===tom){b.style.background="#1F4A75";b.style.color="#fff";}
-b.addEventListener("click",function(){tom=i;$("tt").textContent=n;$("painel").style.display="none";tok++;$("eo").style.display="none";$("co").style.display="none";phase="between";tone(tm(),1,true);if(treino)later(novaT,1700);else if(!tocar&&hearts>0)later(fire,1700);});keys.appendChild(b);});}
+b.addEventListener("click",function(){tom=i;$("tt").textContent=n;$("painel").style.display="none";tok++;$("eo").style.display="none";$("co").style.display="none";phase="between";if(treino)escala(novaT);else if(!tocar&&hearts>0)escala(fire);else escala(function(){});});keys.appendChild(b);});}
 $("tom").addEventListener("click",function(){mk();$("painel").style.display="flex";});
 $("fechar").addEventListener("click",function(){$("painel").style.display="none";});
 $("go").addEventListener("click",function(){var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();begin();});
@@ -237,22 +239,30 @@ function answerT(i){if(phase!=="treino"||answered)return;answered=true;tT++;var 
 if(i===target){aT++;sfxOk();anim(b,"ring",600);hudT();later(novaT,1000);}
 else{sfxErr();anim(b,"shake",400);hint(target);hudT();later(function(){playT();},700);later(novaT,2800);}}
 function startTreino(){releaseAll();tocar=false;treino=true;stage.classList.remove("tocar");stage.classList.add("treino");$("ttl").textContent="Treinar";aT=0;tT=0;hudT();tok++;last=-1;phase="between";
-$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";tone(tm(),1,true);later(novaT,1500);}
+$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";escala(novaT);}
 var KM={KeyA:0,KeyS:1,KeyD:2,KeyF:3,KeyJ:4,KeyK:5,KeyL:6,Semicolon:7};
 function kidx(e){var i=KM[e.code];if(i===undefined&&(e.key==="ç"||e.key==="Ç"))i=7;return i;}
-function livre(){return $("titulo").style.display==="none"&&$("painel").style.display!=="flex"&&$("pnom").style.display!=="flex"&&$("fim").style.display!=="flex"&&!port;}
+function livre(){return $("titulo").style.display==="none"&&$("painel").style.display!=="flex"&&$("pnom").style.display!=="flex"&&$("fim").style.display!=="flex"&&$("escolha").style.display!=="flex"&&!port;}
 addEventListener("keydown",function(e){if(e.repeat||e.ctrlKey||e.metaKey||e.altKey||!ctx||!livre())return;var i=kidx(e);
 if(i!==undefined){e.preventDefault();if(tocar)startNote(i,btn(i),"k"+i);else if(treino)answerT(i);else answer(i);}
 else if(e.code==="KeyG"){e.preventDefault();tone(tm(),1,true);}
 else if(e.code==="KeyH"){if(treino&&target!=null)playT();}});
 addEventListener("keyup",function(e){if(!tocar)return;var i=kidx(e);if(i!==undefined)endNote("k"+i);});
+function escala(done){phase="between";var n=NOM[tom],m=$("msg");m.style.display="block";
+for(var k=0;k<8;k++)(function(k){later(function(){tone(tm()+SEMI[k],.5,true);anim(btn(k),"ring",420);m.innerHTML="<small>Escala de "+n+" maior</small><br><b>"+LAB[modo][k]+"</b>";},k*520);})(k);
+later(function(){m.style.display="none";done();},8*520+500);}
+var pend=null;
+function pedir(md){pend=md;var g=$("keys2");g.innerHTML="";NOM.forEach(function(n,i){var b=document.createElement("button");b.textContent=n;
+if(i===tom){b.style.background="#1F4A75";b.style.color="#fff";}
+b.addEventListener("click",function(){tom=i;$("tt").textContent=n;$("escolha").style.display="none";if(pend==="bat")begin();else startTreino();});g.appendChild(b);});$("escolha").style.display="flex";}
+$("voltar").addEventListener("click",function(){$("escolha").style.display="none";$("titulo").style.display="flex";});
 function lock(){try{var o=screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape");if(o&&o.catch)o.catch(function(){});}catch(e){}}
 $("bb").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}
 if(r&&r.then)r.then(lock,lock);else lock();
 var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();
-$("titulo").style.display="none";begin();});
+$("titulo").style.display="none";pedir("bat");});
 $("brp").addEventListener("click",function(){if(treino&&target!=null)playT();});
-$("btr").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();$("titulo").style.display="none";startTreino();});
+$("btr").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();$("titulo").style.display="none";pedir("tre");});
 $("bt").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();tok++;phase="menu";tocar=true;treino=false;stage.classList.remove("treino");stage.classList.add("tocar");$("ttl").textContent="Tocar";$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";$("titulo").style.display="none";});
 $("mnu").addEventListener("click",function(){releaseAll();tocar=false;treino=false;stage.classList.remove("tocar","treino");tok++;phase="menu";$("eo").style.display="none";$("co").style.display="none";$("painel").style.display="none";$("pnom").style.display="none";$("fim").style.display="none";
 try{if(document.fullscreenElement)document.exitFullscreen();else if(document.webkitFullscreenElement)document.webkitExitFullscreen();}catch(e){}
