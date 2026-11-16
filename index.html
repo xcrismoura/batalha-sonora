@@ -69,6 +69,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 #stage.desk #tom{top:198px;height:30px}#stage.desk #mod{top:232px;height:28px}#stage.desk #bto{top:266px;height:32px}#stage.desk #brp{top:302px;height:30px}
 #keys2{display:grid;grid-template-columns:repeat(4,86px);gap:10px;margin-bottom:14px}#keys2 button{height:48px;border-radius:10px;font-size:18px;font-weight:600;background:#fff;border:2px solid #9A9A9A;color:#12324f}#msg{position:absolute;left:230px;top:62px;width:240px;text-align:center;background:#7EC8F2;border-radius:14px;padding:8px 0;font-size:15px;color:#12324f;display:none;z-index:3}#msg b{font-size:34px}
 .mus #roll,.mus #ttl,.mus #fbk{display:block}#fbk{display:none}#prep{gap:6px}#pMw{display:none;flex-direction:column;align-items:center;gap:4px}#pM{height:38px;min-width:290px;font-size:16px;font-weight:600;border:2px solid #9A9A9A;border-radius:8px;background:#fff;color:#12324f;padding:0 10px}#prep p.lb{margin:0;font-size:14px;font-weight:600}#prep .row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}#prep .row button{height:34px;min-width:44px;padding:0 10px;border-radius:8px;font-size:15px;font-weight:600;background:#fff;border:2px solid #9A9A9A;color:#12324f}#prep .row button.sel{background:#1F4A75;color:#fff;border-color:#1F4A75}.mus #hp,.mus #tb,.mus .orb,.mus #fx,.mus #pts,.mus #bto,.mus #brp{display:none!important}
+#ver{position:absolute;bottom:8px;right:12px;font-size:12px;color:#12324f;opacity:.7}
 #giro{display:none;position:fixed;inset:0;background:#B8D4E3;color:#12324f;z-index:9;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:600;padding:24px}
 </style>
 </head>
@@ -116,7 +117,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 <div class="ov" id="painel" style="display:none"><p><b>Tonalidade</b> (dó fixo)</p><div id="keys"></div><button class="big" id="fechar" style="font-size:16px;padding:8px 26px">Fechar</button></div>
 <div class="ov" id="pnom" style="display:none"><p><b>Nomes das notas</b></p><div id="nk"></div><button class="big" id="fn" style="font-size:16px;padding:8px 26px">Fechar</button></div>
 <div class="ov" id="inicio" style="display:none"><h1>Defesa das notas</h1><p>O computador atira um som, que toca por 1 segundo. Você tem 10 segundos para contra-atacar com o grau certo, e só pode escolher uma nota. A tônica é a nota vermelha.</p><button class="big" id="go">Começar</button></div>
-<div class="ov" id="fim" style="display:none"><h1>Fim de jogo</h1><p id="res"></p><button class="big" id="again">Jogar de novo</button></div>
+<div class="ov" id="fim" style="display:none"><h1>Fim de jogo</h1><p id="res"></p><div style="display:flex;gap:12px"><button class="big" id="again">Jogar de novo</button><button class="big" id="fimMenu" style="background:#fff;color:#1F4A75;border:3px solid #1F4A75">Menu</button></div></div>
 </div>
 <div id="titulo">
 <svg class="art" viewBox="0 0 700 200" aria-hidden="true">
@@ -138,6 +139,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 </svg>
 <h1>Batalha Sonora</h1><p>Treine o ouvido pelos graus da escala</p>
 <div id="tbtns"><button class="big" id="bb">Batalhar</button><button class="big alt" id="btr">Treinar</button><button class="big alt" id="bt">Ensaiar</button><button class="big alt" id="bm">Tocar</button></div>
+<div id="ver">Versão 2.0</div>
 <div id="aviso" style="display:none;position:fixed;left:50%;bottom:8%;transform:translateX(-50%);background:#1F4A75;color:#fff;padding:12px 22px;border-radius:12px;z-index:30;font-weight:600">Modo Tocar: em breve</div>
 </div>
 <div id="giro">Gire o celular para a horizontal para jogar.</div>
@@ -294,20 +296,22 @@ var xs=Math.max(x0,HIT),y=6+(12-SEMI[n.d])*11+1;c.fillStyle=n.st===2?"#5B6B8C":C
 if(n.st===1||n.st===3){c.fillStyle="rgba(255,255,255,.55)";c.fillRect(xs,y,x1-xs,9);}
 else if(n.st===0){c.strokeStyle="#fff";c.lineWidth=1;c.strokeRect(xs+.5,y+.5,x1-xs-1,8);}}
 }
+function fsUp(){var app=false;try{app=matchMedia("(display-mode: fullscreen)").matches||matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;}catch(e){}
+if(app)return;var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();}
 function lock(){try{var o=screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape");if(o&&o.catch)o.catch(function(){});}catch(e){}}
-$("bb").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}
-if(r&&r.then)r.then(lock,lock);else lock();
+$("bb").addEventListener("click",function(){fsUp();
 var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();
 $("titulo").style.display="none";prep("bat");});
-$("bm").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();$("titulo").style.display="none";prep("mus");});
+$("bm").addEventListener("click",function(){fsUp();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();$("titulo").style.display="none";prep("mus");});
+$("fimMenu").addEventListener("click",function(){$("mnu").click();});
 $("outra").addEventListener("click",function(){$("fimM").style.display="none";prep("mus",true);});
 $("pgo").addEventListener("click",function(){$("prep").style.display="none";if(pm==="bat")begin();else if(pm==="tre")startTreino();else startMus();});
 $("pvolta").addEventListener("click",function(){$("prep").style.display="none";$("mnu").click();});
 $("deNovo").addEventListener("click",function(){$("fimM").style.display="none";startMus();});
 $("vMenu").addEventListener("click",function(){$("mnu").click();});
 $("brp").addEventListener("click",function(){if(treino&&target!=null)playT();});
-$("btr").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();$("titulo").style.display="none";prep("tre");});
-$("bt").addEventListener("click",function(){var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();tok++;phase="menu";tocar=true;treino=false;mus=false;stage.classList.remove("treino","mus");stage.classList.add("tocar");$("ttl").textContent="Ensaiar";$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";$("titulo").style.display="none";});
+$("btr").addEventListener("click",function(){fsUp();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();$("titulo").style.display="none";prep("tre");});
+$("bt").addEventListener("click",function(){fsUp();var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();tok++;phase="menu";tocar=true;treino=false;mus=false;stage.classList.remove("treino","mus");stage.classList.add("tocar");$("ttl").textContent="Ensaiar";$("eo").style.display="none";$("co").style.display="none";$("fim").style.display="none";$("titulo").style.display="none";});
 $("mnu").addEventListener("click",function(){releaseAll();tocar=false;treino=false;mus=false;$("fimM").style.display="none";stage.classList.remove("tocar","treino","mus");tok++;phase="menu";$("eo").style.display="none";$("co").style.display="none";$("painel").style.display="none";$("pnom").style.display="none";$("fim").style.display="none";
 try{if(document.fullscreenElement)document.exitFullscreen();else if(document.webkitFullscreenElement)document.webkitExitFullscreen();}catch(e){}
 try{screen.orientation.unlock();}catch(e){}
