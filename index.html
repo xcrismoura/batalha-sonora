@@ -70,6 +70,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 #keys2{display:grid;grid-template-columns:repeat(4,86px);gap:10px;margin-bottom:14px}#keys2 button{height:48px;border-radius:10px;font-size:18px;font-weight:600;background:#fff;border:2px solid #9A9A9A;color:#12324f}#msg{position:absolute;left:230px;top:62px;width:240px;text-align:center;background:#7EC8F2;border-radius:14px;padding:8px 0;font-size:15px;color:#12324f;display:none;z-index:3}#msg b{font-size:34px}
 .mus #roll,.mus #ttl,.mus #fbk{display:block}#fbk{display:none}#prep{gap:6px}#pMw{display:none;flex-direction:column;align-items:center;gap:4px}#pM{height:38px;min-width:290px;font-size:16px;font-weight:600;border:2px solid #9A9A9A;border-radius:8px;background:#fff;color:#12324f;padding:0 10px}#prep p.lb{margin:0;font-size:14px;font-weight:600}#prep .row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}#prep .row button{height:34px;min-width:44px;padding:0 10px;border-radius:8px;font-size:15px;font-weight:600;background:#fff;border:2px solid #9A9A9A;color:#12324f}#prep .row button.sel{background:#1F4A75;color:#fff;border-color:#1F4A75}.mus #hp,.mus #tb,.mus .orb,.mus #fx,.mus #pts,.mus #bto,.mus #brp{display:none!important}
 #ver{position:absolute;bottom:8px;right:12px;font-size:12px;color:#12324f;opacity:.7}
+#tbg{position:absolute;left:0;top:34px;width:700px;height:156px;display:none}.treino #tbg{display:block}#qq{z-index:2}.treino #qq{color:#fff!important;background:rgba(27,37,89,.88);border-radius:14px;padding:6px 0}.treino #msg{background:#2A3680;color:#fff}
 #giro{display:none;position:fixed;inset:0;background:#B8D4E3;color:#12324f;z-index:9;align-items:center;justify-content:center;text-align:center;font-size:20px;font-weight:600;padding:24px}
 </style>
 </head>
@@ -96,6 +97,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 <div class="t" id="hp"></div><div class="t" id="fbk" style="left:374px;top:5px;font-size:20px"></div><div class="t" id="qq" style="left:250px;top:92px;width:200px;text-align:center;font-size:24px;color:#12324f">Qual é a nota?</div><div class="t" id="ttl" style="left:18px;top:7px;font-size:16px">Ensaiar</div><div class="t" id="cmb"></div><div class="t" id="sc"></div><div id="tb"></div>
 <div class="orb" id="eo">&#9834;</div><div class="orb" id="co"></div><div id="fx"></div><div id="pts"></div><div id="msg"></div>
 
+<canvas id="tbg" width="1400" height="312"></canvas>
 <canvas id="roll" width="1400" height="312"></canvas>
 <button class="n" data-i="1" style="left:84px;top:190px;background:#F57C00;color:#2b1500">PA</button>
 <button class="n" data-i="2" style="left:36px;top:236px;background:#FFF200;color:#332f00">MA</button>
@@ -139,7 +141,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 </svg>
 <h1>Batalha Sonora</h1><p>Treine o ouvido pelos graus da escala</p>
 <div id="tbtns"><button class="big" id="bb">Batalhar</button><button class="big alt" id="btr">Treinar</button><button class="big alt" id="bt">Ensaiar</button><button class="big alt" id="bm">Tocar</button></div>
-<div id="ver">Versão 2.0</div>
+<div id="ver">Versão 2.1</div>
 <div id="aviso" style="display:none;position:fixed;left:50%;bottom:8%;transform:translateX(-50%);background:#1F4A75;color:#fff;padding:12px 22px;border-radius:12px;z-index:30;font-weight:600">Modo Tocar: em breve</div>
 </div>
 <div id="giro">Gire o celular para a horizontal para jogar.</div>
@@ -194,7 +196,7 @@ $("res").textContent="Pontos: "+score+" \u00b7 Recorde: "+best;$("fim").style.di
 function begin(){tocar=false;treino=false;mus=false;stage.classList.remove("tocar","treino","mus");releaseAll();tok++;hearts=3;score=0;combo=0;last=-1;hud();bar(DUR);$("eo").style.display="none";$("co").style.display="none";
 $("inicio").style.display="none";$("fim").style.display="none";escala(fire);}
 
-function tick(ts){var dt=Math.min(.05,(ts-prev)/1000);prev=ts;if(port)dt=0;if(msgTok!==tok)$("msg").style.display="none";if(tocar)draw(performance.now());if(mus){updM(dt);drawM();}
+function tick(ts){var dt=Math.min(.05,(ts-prev)/1000);prev=ts;if(port)dt=0;if(msgTok!==tok)$("msg").style.display="none";if(tocar)draw(performance.now());if(mus){updM(dt);drawM();}if(treino)drawT(performance.now());
 if(phase==="flying"){elapsed+=dt;ex=START-SPEED*elapsed;rem=Math.max(0,DUR-elapsed);bar(rem);place($("eo"),ex);
 if(ex<=HITX)hit();}
 else if(phase==="counter"){elapsed+=dt;ex-=SPEED*dt;cx+=650*dt;place($("eo"),ex);place($("co"),cx);if(cx>=ex)collide();}
@@ -298,6 +300,13 @@ else if(n.st===0){c.strokeStyle="#fff";c.lineWidth=1;c.strokeRect(xs+.5,y+.5,x1-
 }
 function fsUp(){var app=false;try{app=matchMedia("(display-mode: fullscreen)").matches||matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;}catch(e){}
 if(app)return;var el=document.documentElement,r;try{r=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);}catch(e){}if(r&&r.then)r.then(lock,lock);else lock();}
+var TB=[];for(var z2=0;z2<14;z2++)TB.push({x:z2*54,y:30+((z2*37)%110),v:10+(z2%5)*4,c:COL[z2%8],ph:z2,f:.6+(z2%4)*.2,fl:z2%2});
+function drawT(now){var c=$("tbg").getContext("2d");c.setTransform(2,0,0,2,0,0);c.fillStyle="#1B2559";c.fillRect(0,0,700,156);
+c.strokeStyle="rgba(255,255,255,.22)";c.lineWidth=1.5;for(var i=0;i<5;i++){var y=94+i*12;c.beginPath();c.moveTo(0,y);c.lineTo(700,y);c.stroke();}
+var t=now/1000;c.globalAlpha=.75;
+TB.forEach(function(n){var x=((n.x+t*n.v)%760)-30,y=n.y+Math.sin(t*n.f+n.ph)*8;c.fillStyle=n.c;c.strokeStyle=n.c;
+c.beginPath();c.ellipse(x,y,7,5,-.4,0,6.283);c.fill();c.lineWidth=2;c.beginPath();c.moveTo(x+6,y-1);c.lineTo(x+6,y-24);c.stroke();
+if(n.fl){c.beginPath();c.moveTo(x+6,y-24);c.quadraticCurveTo(x+16,y-18,x+12,y-8);c.stroke();}});c.globalAlpha=1;}
 function lock(){try{var o=screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape");if(o&&o.catch)o.catch(function(){});}catch(e){}}
 $("bb").addEventListener("click",function(){fsUp();
 var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();
