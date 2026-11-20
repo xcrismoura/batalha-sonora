@@ -147,7 +147,7 @@ button{font:inherit;cursor:pointer;touch-action:manipulation}
 </svg>
 <h1>Batalha Sonora</h1><p>Treine o ouvido pelos graus da escala</p>
 <div id="tbtns"><button class="big" id="bb">Batalhar</button><button class="big alt" id="btr">Treinar</button><button class="big alt" id="bt">Ensaiar</button><button class="big alt" id="bm">Tocar</button><button class="big alt" id="bo">Ouvir</button></div>
-<div id="ver">Versão 2.4</div>
+<div id="ver">Versão 2.5</div>
 <div id="aviso" style="display:none;position:fixed;left:50%;bottom:8%;transform:translateX(-50%);background:#1F4A75;color:#fff;padding:12px 22px;border-radius:12px;z-index:30;font-weight:600">Modo Tocar: em breve</div>
 </div>
 <div id="giro">Gire o celular para a horizontal para jogar.</div>
@@ -322,17 +322,16 @@ function updO(dt){if(phase!=="ouv")return;tM+=dt;
 for(var q=0;q<notas.length;q++){var n=notas[q];if(!n.on&&tM>=n.ts){n.on=true;autoNote(n.d,n.dur);}}
 if(tM>endT&&!fim){fim=true;phase="fim";later(fimOuv,300);}}
 function fimOuv(){$("resM").innerHTML="Fim da música.";$("deNovo").textContent="Ouvir de novo";$("fimM").style.display="flex";}
-function drawO(){var c=$("ouvc").getContext("2d"),HO=86,U=22,act={};c.setTransform(2,0,0,2,0,0);c.fillStyle="#0F1E45";c.fillRect(0,0,700,306);
+function drawO(){var c=$("ouvc").getContext("2d"),HO=350,U=22,act={};c.setTransform(2,0,0,2,0,0);c.fillStyle="#0F1E45";c.fillRect(0,0,700,306);
 for(var q=0;q<notas.length;q++){var n=notas[q];if(n.on&&tM<n.ts+n.dur)act[n.d]=1;}
-c.font="bold 15px sans-serif";c.textAlign="center";c.textBaseline="middle";
-for(var k=0;k<8;k++){var y=8+(12-SEMI[k])*U;c.fillStyle="rgba(255,255,255,.07)";c.fillRect(HO,y+U/2,700-HO,1);c.fillStyle=COL[k];c.fillRect(6,y,74,U);
-c.fillStyle=TXT[k];c.fillText(LAB[modo][k],43,y+U/2+1);if(act[k]){c.strokeStyle="#fff";c.lineWidth=3;c.strokeRect(7.5,y+1.5,71,U-3);}}
-c.fillStyle="rgba(255,255,255,.5)";c.fillRect(HO-2,0,2,306);
-c.save();c.beginPath();c.rect(HO,0,700-HO,306);c.clip();c.font="bold 13px sans-serif";c.textAlign="left";
-for(var q2=0;q2<notas.length;q2++){var m=notas[q2],x0=HO+(m.ts-tM)*V2,x1=x0+m.len;if(x1<HO||x0>700)continue;var yy=8+(12-SEMI[m.d])*U+1;
-c.fillStyle=COL[m.d];c.fillRect(x0,yy,x1-x0,U-2);if(m.on&&tM<m.ts+m.dur){c.fillStyle="rgba(255,255,255,.4)";c.fillRect(x0,yy,x1-x0,U-2);}
-if(x1-Math.max(x0,HO)>26){c.fillStyle=TXT[m.d];c.fillText(LAB[modo][m.d],Math.max(x0,HO)+8,yy+(U-2)/2+1);}}
-c.restore();}
+c.fillStyle="rgba(255,255,255,.07)";for(var r=0;r<8;r++)c.fillRect(0,8+(12-SEMI[r])*U+U/2,700,1);
+for(var q2=0;q2<notas.length;q2++){var m=notas[q2],x0=HO+(m.ts-tM)*V2,x1=x0+m.len;if(x1<0||x0>700)continue;var yy=8+(12-SEMI[m.d])*U+1;
+c.fillStyle=COL[m.d];c.fillRect(x0,yy,x1-x0,U-2);
+if(x0<HO){c.fillStyle="rgba(15,30,69,.62)";c.fillRect(x0,yy,Math.min(x1,HO)-x0,U-2);}}
+c.fillStyle="rgba(255,255,255,.55)";c.fillRect(HO-1,0,2,306);
+c.font="bold 14px sans-serif";c.textAlign="center";c.textBaseline="middle";
+for(var k=0;k<8;k++){var y=8+(12-SEMI[k])*U;c.fillStyle=COL[k];c.fillRect(HO-20,y,40,U);c.fillStyle=TXT[k];c.fillText(LAB[modo][k],HO,y+U/2+1);
+if(act[k]){c.strokeStyle="#fff";c.lineWidth=3;c.strokeRect(HO-18.5,y+1.5,37,U-3);}}}
 function lock(){try{var o=screen.orientation&&screen.orientation.lock&&screen.orientation.lock("landscape");if(o&&o.catch)o.catch(function(){});}catch(e){}}
 $("bb").addEventListener("click",function(){fsUp();
 var AC=window.AudioContext||window.webkitAudioContext;if(!ctx)ctx=new AC();if(ctx.state==="suspended")ctx.resume();
